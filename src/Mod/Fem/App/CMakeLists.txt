@@ -93,7 +93,6 @@ SET(FemScripts_SRCS
     FemResultTools.py
     FemTools.py
     FemToolsCcx.py
-    FemToolsZ88.py
     ObjectsFem.py
     FemUtils.py
     TestFem.py
@@ -114,7 +113,6 @@ SET(FemObjectsScripts_SRCS
     PyObjects/_FemMeshRegion.py
     PyObjects/_FemResultMechanical.py
     PyObjects/_FemSolverCalculix.py
-    PyObjects/_FemSolverZ88.py
     PyObjects/_FemMaterial.py
 )
 
@@ -186,7 +184,6 @@ SET(FemGuiScripts_SRCS
     PyGui/_ViewProviderFemMeshResult.py
     PyGui/_ViewProviderFemResultMechanical.py
     PyGui/_ViewProviderFemSolverCalculix.py
-    PyGui/_ViewProviderFemSolverZ88.py
     PyGui/TaskPanelFemElementFluid1D.ui
     PyGui/TaskPanelFemElementGeometry1D.ui
     PyGui/TaskPanelFemElementGeometry2D.ui
