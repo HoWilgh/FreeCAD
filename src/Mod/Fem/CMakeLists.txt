@@ -84,6 +84,16 @@ INSTALL(
 
 INSTALL(
     FILES
+        femsolver/calculix/__init__.py
+        femsolver/calculix/solver.py
+        femsolver/calculix/tasks.py
+        femsolver/calculix/writer.py
+    DESTINATION
+        Mod/Fem/femsolver/calculix
+)
+
+INSTALL(
+    FILES
         femsolver/z88/__init__.py
         femsolver/z88/solver.py
         femsolver/z88/tasks.py

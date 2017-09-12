@@ -127,6 +127,13 @@ SET(FemSolver_SRCS
     femsolver/signal.py
 )
 
+SET(FemCalculix_SRCS
+    femsolver/calculix/__init__.py
+    femsolver/calculix/solver.py
+    femsolver/calculix/tasks.py
+    femsolver/calculix/writer.py
+)
+
 SET(FemZ88_SRCS
     femsolver/z88/__init__.py
     femsolver/z88/solver.py
@@ -336,6 +343,7 @@ fc_target_copy_resource(Fem
     ${FemGuiScripts_SRCS}
     ${FemTests_SRCS}
     ${FemSolver_SRCS}
+    ${FemCalculix_SRCS}
     ${FemZ88_SRCS}
 )
 
