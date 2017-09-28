@@ -79,7 +79,7 @@ class _CommandFemSolverRun(FemCommands):
                     "Selected working directory doesn't exist.")
                 return
             if not machine.running:
-                machine.reset()
+                machine.reset(femsolver.run.SOLVE)
                 machine.target = femsolver.run.RESULTS
                 machine.start()
 
