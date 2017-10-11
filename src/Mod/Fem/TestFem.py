@@ -557,7 +557,7 @@ class FemCcxAnalysisTest(unittest.TestCase):
         fcc_print('Save FreeCAD file for frequency analysis to {}...'.format(frequency_save_fc_file))
         self.active_doc.saveAs(frequency_save_fc_file)
 
-        # use new solver frame work solver
+        # use new solver frame work ccx solver
         fcc_print('Checking FEM new solver for new solver frame work...')
         solver_ccx2_object = ObjectsFem.makeSolverCalculix(self.active_doc, 'SolverCalculiX')
         solver_ccx2_object.GeometricalNonlinearity = 'linear'
@@ -567,12 +567,13 @@ class FemCcxAnalysisTest(unittest.TestCase):
         solver_ccx2_object.EigenmodesCount = 10
         solver_ccx2_object.EigenmodeHighLimit = 1000000.0
         solver_ccx2_object.EigenmodeLowLimit = 0.0
-        self.assertTrue(solver_ccx2_object, "FemTest of new solver failed")
+        self.assertTrue(solver_ccx2_object, "FemTest of new ccx solver failed")
         analysis.Member = analysis.Member + [solver_ccx2_object]
 
         fcc_print('Checking inpfile writing for new solver frame work...')
-        if not os.path.exists(static2_analysis_dir):
+        if not os.path.exists(static2_analysis_dir):  # new solver frameworkd does explicit not create a non existing directory
             os.makedirs(static2_analysis_dir)
+
         machine = solver_ccx2_object.Proxy.createMachine(solver_ccx2_object, static2_analysis_dir)
         machine.target = femsolver.run.PREPARE
         machine.start()
@@ -580,6 +581,13 @@ class FemCcxAnalysisTest(unittest.TestCase):
         fcc_print('Comparing {} to {}/{}.inp'.format(static_analysis_inp_file, static2_analysis_dir, mesh_name))
         ret = compare_inp_files(static_analysis_inp_file, static2_analysis_dir + mesh_name + '.inp')
         self.assertFalse(ret, "FemToolsCcx write_inp_file test failed.\n{}".format(ret))
+
+        # use new solver frame work elmer solver
+        solver_elmer_object = ObjectsFem.makeSolverElmer(self.active_doc, 'SolverElmer')
+        self.assertTrue(solver_elmer_object, "FemTest of elmer solver failed")
+        analysis.Member = analysis.Member + [solver_elmer_object]
+        solver_elmer_eqobj = ObjectsFem.makeEquationElasticity(self.active_doc, solver_elmer_object)
+        self.assertTrue(solver_elmer_object, "FemTest of elmer elasticity equation failed")
 
         fcc_print('Save FreeCAD file for static2 analysis to {}...'.format(static2_save_fc_file))
         self.active_doc.saveAs(static2_save_fc_file)
