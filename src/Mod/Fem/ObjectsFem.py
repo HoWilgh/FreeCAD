@@ -42,6 +42,22 @@ def makeAnalysis(
     return obj
 
 
+# ********* constant objects *********************************************************************
+def makeConstantPermittivityOfVakuum(
+    doc,
+    name="ConstantPermittivityOfVakuum"
+):
+    """makeConstantPermittivityOfVakuum(document, [name]):
+    makes a Fem ConstantPermittivityOfVakuum object"""
+    obj = doc.addObject("Fem::ConstraintPython", name)
+    from femobjects import _FemConstantPermittivityOfVakuum
+    _FemConstantPermittivityOfVakuum.Proxy(obj)
+    if FreeCAD.GuiUp:
+        from femguiobjects import _ViewProviderFemConstantPermittivityOfVakuum
+        _ViewProviderFemConstantPermittivityOfVakuum.ViewProxy(obj.ViewObject)
+    return obj
+
+
 # ********* constraint objects *******************************************************************
 def makeConstraintBearing(
     doc,

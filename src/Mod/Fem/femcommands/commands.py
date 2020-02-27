@@ -133,6 +133,19 @@ class _ClippingPlaneRemoveAll(CommandManager):
         FreeCADGui.doCommand(line1 + line2 + line3)
 
 
+class _ConstantPermittivityOfVakuum(CommandManager):
+    "The FEM_ConstantPermittivityOfVakuum command definition"
+
+    def __init__(self):
+        super(_ConstantPermittivityOfVakuum, self).__init__()
+        self.pixmap = "preferences-fem"
+        self.menuetext = "Constant permittivity of vakuum"
+        self.tooltip = "Creates a FEM constant permittivity of vakuum to overwrite standard value"
+        self.is_active = "with_document"
+        self.is_active = "with_analysis"
+        self.do_activated = "add_obj_on_gui_noset_edit"
+
+
 class _ConstraintBodyHeatSource(CommandManager):
     "The FEM_ConstraintBodyHeatSource command definition"
 
@@ -764,6 +777,10 @@ FreeCADGui.addCommand(
 FreeCADGui.addCommand(
     "FEM_ClippingPlaneRemoveAll",
     _ClippingPlaneRemoveAll()
+)
+FreeCADGui.addCommand(
+    "FEM_ConstantPermittivityOfVakuum",
+    _ConstantPermittivityOfVakuum()
 )
 FreeCADGui.addCommand(
     "FEM_ConstraintBodyHeatSource",

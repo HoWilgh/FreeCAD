@@ -77,6 +77,8 @@ def getFromUi(value, unit, outputDim):
 
 
 def convert(quantityStr, unit):
+    print(quantityStr)
+    print(unit)
     quantity = Units.Quantity(quantityStr)
     for key, setting in UNITS.items():
         unit = unit.replace(key, setting)
@@ -95,6 +97,15 @@ def getConstant(name, dimension):
     return convert(CONSTS_DEF[name], dimension)
 
 
+def setConstant(name, quantityStr):
+    print(CONSTS_DEF[name])
+    if name == "PermittivityOfVacuum":
+        theUnit = "W/(m^2*K^4)"
+        CONSTS_DEF[name] = "{} {}".format(convert(quantityStr, theUnit), theUnit)
+    print(CONSTS_DEF[name])
+    return True
+
+
 class Writer(object):
 
     def __init__(self, solver, directory, testmode=False):
@@ -110,6 +121,7 @@ class Writer(object):
         return self._handledObjects
 
     def write(self):
+        self._handleConstants()
         self._handleSimulation()
         self._handleHeat()
         self._handleElasticity()
@@ -183,6 +195,17 @@ class Writer(object):
         os.remove(brepPath)
         os.remove(geoPath)
         os.remove(unvGmshPath)
+
+    def _handleConstants(self):
+        for obj in self._getMember("Fem::ConstantPermittivityOfVakuum"):
+            print("we need to overwrite the CONSTS_DEF['PermittivityOfVacuum'] in elmer writer")
+            setConstant("PermittivityOfVacuum", "0 W/(m^2*K^4)")
+            print(CONSTS_DEF)
+        """
+        self._constant(
+            "Permittivity Of Vacuum",
+            getConstant("PermittivityOfVacuum", "T^4*I^2/(L*M)"))
+        """
 
     def _handleSimulation(self):
         self._simulation("Coordinate System", "Cartesian 3D")

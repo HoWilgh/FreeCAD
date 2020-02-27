@@ -232,6 +232,7 @@ SET(FemTools_SRCS
 
 SET(FemObjectsScripts_SRCS
     femobjects/__init__.py
+    femobjects/_FemConstantPermittivityOfVakuum.py
     femobjects/_FemConstraintBodyHeatSource.py
     femobjects/_FemConstraintElectrostaticPotential.py
     femobjects/_FemConstraintFlowVelocity.py
@@ -315,6 +316,7 @@ INSTALL(FILES ${FemObjectsScripts_SRCS} DESTINATION Mod/Fem/femobjects)
 # Python Gui packages and modules
 SET(FemGuiScripts_SRCS
     femguiobjects/__init__.py
+    femguiobjects/_ViewProviderFemConstantPermittivityOfVakuum.py
     femguiobjects/_TaskPanelFemSolverControl.py
     femguiobjects/_ViewProviderFemConstraintBodyHeatSource.py
     femguiobjects/_ViewProviderFemConstraintElectrostaticPotential.py

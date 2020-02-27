@@ -52,6 +52,8 @@ using namespace FemGui;
     qApp->translate("Workbench", "&Mechanical Constraints");
     qApp->translate("Workbench", "Thermal Constraints");
     qApp->translate("Workbench", "&Thermal Constraints");
+    qApp->translate("Workbench", "Overwrite Constants");
+    qApp->translate("Workbench", "&Overwrite Constants");
     //
     qApp->translate("Workbench", "Mesh");
     qApp->translate("Workbench", "M&esh");
@@ -240,6 +242,10 @@ Gui::MenuItem* Workbench::setupMenuBar() const
              << "FEM_ConstraintTemperature"
              << "FEM_ConstraintBodyHeatSource";
 
+    Gui::MenuItem* constants = new Gui::MenuItem;
+    constants->setCommand("&Overwrite Constants");
+    *constants << "FEM_ConstantPermittivityOfVakuum";
+
     Gui::MenuItem* fluid = new Gui::MenuItem;
     fluid->setCommand("&Fluid Constraints");
     *fluid << "FEM_ConstraintInitialFlowVelocity"
@@ -258,7 +264,9 @@ Gui::MenuItem* Workbench::setupMenuBar() const
            << elec
            << fluid
            << mech
-           << thermal;
+           << thermal
+           << "Separator"
+           << constants;
 
     Gui::MenuItem* mesh = new Gui::MenuItem;
     root->insertItem(item, mesh);
