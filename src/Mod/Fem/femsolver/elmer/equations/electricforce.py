@@ -21,110 +21,33 @@
 # *                                                                         *
 # ***************************************************************************
 
-__title__ = "FreeCAD FEM solver equation base object"
+__title__ = "FreeCAD FEM solver Elmer equation object Electricforcesolver"
 __author__ = "Markus Hovorka"
 __url__ = "http://www.freecadweb.org"
 
 ## \addtogroup FEM
 #  @{
 
-import FreeCAD
+from femtools import femutils
+from ... import equationbase
+from . import linear
 
-if FreeCAD.GuiUp:
-    from pivy import coin
+
+def create(doc, name="Electricforcesolver"):
+    return femutils.createObject(
+        doc, name, Proxy, ViewProxy)
 
 
-class BaseProxy(object):
+class Proxy(linear.Proxy, equationbase.ElectricforcesolverProxy):
 
-    BaseType = "App::FeaturePython"
+    Type = "Fem::EquationElmerElectricforcesolver"
 
     def __init__(self, obj):
-        obj.Proxy = self
-        obj.addProperty(
-            "App::PropertyLinkSubList", "References",
-            "Base", "")
-
-    def execute(self, obj):
-        return True
+        super(Proxy, self).__init__(obj)
+        obj.Priority = 5
 
 
-class BaseViewProxy(object):
-
-    def __init__(self, vobj):
-        vobj.Proxy = self
-
-    def attach(self, vobj):
-        default = coin.SoGroup()
-        vobj.addDisplayMode(default, "Default")
-
-    def getDisplayModes(self, obj):
-        "Return a list of display modes."
-        modes = ["Default"]
-        return modes
-
-    def getDefaultDisplayMode(self):
-        return "Default"
-
-    def setDisplayMode(self, mode):
-        return mode
-
-
-class HeatProxy(BaseProxy):
+class ViewProxy(linear.ViewProxy, equationbase.ElectricforcesolverViewProxy):
     pass
-
-
-class HeatViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationHeat.svg"
-
-
-class ElasticityProxy(BaseProxy):
-    pass
-
-
-class ElasticityViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationElasticity.svg"
-
-
-class ElectrostaticViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationElectrostatic.svg"
-
-
-class ElectrostaticProxy(BaseProxy):
-    pass
-
-
-class FluxsolverViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationFluxsolver.svg"
-
-
-class FluxsolverProxy(BaseProxy):
-    pass
-
-class ElectricforcesolverViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationElectricforcesolver.svg"
-
-
-class ElectricforcesolverProxy(BaseProxy):
-    pass
-
-
-class FlowProxy(BaseProxy):
-    pass
-
-
-class FlowViewProxy(BaseViewProxy):
-
-    def getIcon(self):
-        return ":/icons/FEM_EquationFlow.svg"
 
 ##  @}

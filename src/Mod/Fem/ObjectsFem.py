@@ -683,6 +683,18 @@ def makeEquationFluxsolver(
     return obj
 
 
+def makeEquationElectricforcesolver(
+    doc,
+    base_solver
+):
+    """makeEquationElectricforcesolver(document, base_solver):
+    creates a FEM Electricforcesolver equation for a solver"""
+    obj = doc.SolverElmer.addObject(
+        doc.SolverElmer.Proxy.createEquation(doc.SolverElmer.Document, "Electricforcesolver")
+    )[0]
+    return obj
+
+
 def makeEquationHeat(
     doc,
     base_solver
