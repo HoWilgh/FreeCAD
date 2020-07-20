@@ -99,6 +99,16 @@ class ElectrostaticProxy(BaseProxy):
     pass
 
 
+class StatcurrentViewProxy(BaseViewProxy):
+
+    def getIcon(self):
+        return ":/icons/FEM_EquationStatcurrent.svg"
+
+
+class StatcurrentProxy(BaseProxy):
+    pass
+
+
 class FluxViewProxy(BaseViewProxy):
 
     def getIcon(self):

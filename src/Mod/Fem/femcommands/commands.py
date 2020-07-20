@@ -285,6 +285,17 @@ class _EquationElectrostatic(CommandManager):
         self.do_activated = "add_obj_on_gui_selobj_noset_edit"
 
 
+class _EquationStatcurrent(CommandManager):
+    "The FEM_EquationStatcurrent command definition"
+
+    def __init__(self):
+        super(_EquationStatcurrent, self).__init__()
+        self.menuetext = "Static current equation"
+        self.tooltip = "Creates a FEM equation for static current"
+        self.is_active = "with_solver_elmer"
+        self.do_activated = "add_obj_on_gui_selobj_noset_edit"
+
+
 class _EquationElasticity(CommandManager):
     "The FEM_EquationElasticity command definition"
 
@@ -866,6 +877,10 @@ FreeCADGui.addCommand(
 FreeCADGui.addCommand(
     "FEM_EquationElectrostatic",
     _EquationElectrostatic()
+)
+FreeCADGui.addCommand(
+    "FEM_EquationStatcurrent",
+    _EquationStatcurrent()
 )
 FreeCADGui.addCommand(
     "FEM_EquationElasticity",

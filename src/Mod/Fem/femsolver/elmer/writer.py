@@ -451,6 +451,92 @@ class Writer(object):
                             self._boundary(name, "Capacitance Body", obj.CapacitanceBody)
                 self._handled(obj)
 
+    def _handleElectrostatic(self):
+        activeIn = []
+        for equation in self.solver.Group:
+            if femutils.is_of_type(equation, "Fem::EquationElmerElectrostatic"):
+                if equation.References:
+                    activeIn = equation.References[0][1]
+                else:
+                    activeIn = self._getAllBodies()
+                solverSection = self._getElectrostaticSolver(equation)
+                for body in activeIn:
+                    self._addSolver(body, solverSection)
+        if activeIn:
+            self._handleElectrostaticConstants()
+            self._handleElectrostaticBndConditions()
+            # self._handleElectrostaticInitial(activeIn)
+            # self._handleElectrostaticBodyForces(activeIn)
+            self._handleElectrostaticMaterial(activeIn)
+
+    def _getStatcurrentSolver(self, equation):
+        s = self._createLinearSolver(equation)
+        s["Equation"] = "Stat Current Solver"  # equation.Name
+        s["Procedure"] = sifio.FileAttr("StatCurrentSolve/StatCurrentSolver")
+        s["Variable"] = self._getUniqueVarName("Potential")
+        s["Variable DOFs"] = 1
+        s["Calculate Volume Current"] = equation.CalculateVolumeCurrent
+        s["Calculate Joule Heating"] = equation.CalculateJouleHeating
+        s["Displace mesh"] = False
+        s["Exec Solver"] = "Always"
+        s["Stabilize"] = equation.Stabilize
+        s["Bubbles"] = equation.Bubbles
+        s["Optimize Bandwidth"] = True
+        return s
+
+    def _handleStatcurrentConstants(self):
+        self._constant(
+            "Permittivity Of Vacuum",
+            self._getConstant("PermittivityOfVacuum", "T^4*I^2/(L^3*M)")
+        )
+        # https://forum.freecadweb.org/viewtopic.php?f=18&p=400959#p400959
+
+    def _handleStatcurrentMaterial(self, bodies):
+        for obj in self._getMember("App::MaterialObject"):
+            m = obj.Material
+            refs = (
+                obj.References[0][1]
+                if obj.References
+                else self._getAllBodies())
+            for name in (n for n in refs if n in bodies):
+                if "RelativePermittivity" in m:
+                    self._material(
+                        name, "Relative Permittivity",
+                        float(m["RelativePermittivity"])
+                    )
+
+    def _handleStatcurrentBndConditions(self):
+        for obj in self._getMember("Fem::ConstraintStatcurrentPotential"):
+            if obj.References:
+                for name in obj.References[0][1]:
+                    # https://forum.freecadweb.org/viewtopic.php?f=18&t=41488&start=10#p369454  ff
+                    if obj.PotentialEnabled:
+                        if hasattr(obj, "Potential"):
+                            potential = self._getFromUi(obj.Potential, "V", "M*L^2/(T^3 * I)")
+                            self._boundary(name, "Potential", potential)
+                    if obj.PotentialConstant:
+                        self._boundary(name, "Potential Constant", True)
+
+                self._handled(obj)
+
+    def _handleStatcurrent(self):
+        activeIn = []
+        for equation in self.solver.Group:
+            if femutils.is_of_type(equation, "Fem::EquationElmerStatcurrent"):
+                if equation.References:
+                    activeIn = equation.References[0][1]
+                else:
+                    activeIn = self._getAllBodies()
+                solverSection = self._getStatcurrentSolver(equation)
+                for body in activeIn:
+                    self._addSolver(body, solverSection)
+        if activeIn:
+            self._handleStatcurrentConstants()
+            self._handleStatcurrentBndConditions()
+            # self._handleElectrostaticInitial(activeIn)
+            # self._handleElectrostaticBodyForces(activeIn)
+            self._handleStatcurrentMaterial(activeIn)
+
     def _handleFlux(self):
         activeIn = []
         for equation in self.solver.Group:

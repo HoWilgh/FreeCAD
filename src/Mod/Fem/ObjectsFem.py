@@ -705,6 +705,20 @@ def makeEquationElectrostatic(
     return obj
 
 
+def makeEquationStatcurrent(
+    doc,
+    base_solver=None,
+    name="Statcurrent"
+):
+    """makeEquationStatcurrent(document, [base_solver], [name]):
+    creates a FEM StaticCurrent equation for a solver"""
+    from femsolver.elmer.equations import statcurrent
+    obj = statcurrent.create(doc, name)
+    if base_solver:
+        base_solver.addObject(obj)
+    return obj
+
+
 def makeEquationFlow(
     doc,
     base_solver=None,
