@@ -91,6 +91,7 @@ class Writer(object):
         self._handleHeat()
         self._handleElasticity()
         self._handleElectrostatic()
+        self._handleStatcurrent()
         self._handleFlux()
         self._handleElectricforce()
         self._handleFlow()
@@ -469,8 +470,26 @@ class Writer(object):
             # self._handleElectrostaticBodyForces(activeIn)
             self._handleElectrostaticMaterial(activeIn)
 
+    def _handleStatcurrent(self):
+        activeIn = []
+        for equation in self.solver.Group:
+            if femutils.is_of_type(equation, "Fem::EquationElmerStatcurrent"):
+                if equation.References:
+                    activeIn = equation.References[0][1]
+                else:
+                    activeIn = self._getAllBodies()
+                solverSection = self._getStatcurrentSolver(equation)
+                for body in activeIn:
+                    self._addSolver(body, solverSection)
+        if activeIn:
+            self._handleStatcurrentConstants()
+            self._handleStatcurrentBndConditions()
+            # self._handleElectrostaticInitial(activeIn)
+            # self._handleElectrostaticBodyForces(activeIn)
+            self._handleStatcurrentMaterial(activeIn)
+
     def _getStatcurrentSolver(self, equation):
-        s = self._createLinearSolver(equation)
+        s = self._createNonlinearSolver(equation)
         s["Equation"] = "Stat Current Solver"  # equation.Name
         s["Procedure"] = sifio.FileAttr("StatCurrentSolve/StatCurrentSolver")
         s["Variable"] = self._getUniqueVarName("Potential")
@@ -499,14 +518,14 @@ class Writer(object):
                 if obj.References
                 else self._getAllBodies())
             for name in (n for n in refs if n in bodies):
-                if "RelativePermittivity" in m:
+                if "ElectricConductivity" in m:
                     self._material(
-                        name, "Relative Permittivity",
-                        float(m["RelativePermittivity"])
+                        name, "Electric Conductivity",
+                        float(m["ElectricConductivity"])
                     )
 
     def _handleStatcurrentBndConditions(self):
-        for obj in self._getMember("Fem::ConstraintStatcurrentPotential"):
+        for obj in self._getMember("Fem::ConstraintElectrostaticPotential"):
             if obj.References:
                 for name in obj.References[0][1]:
                     # https://forum.freecadweb.org/viewtopic.php?f=18&t=41488&start=10#p369454  ff
@@ -518,24 +537,6 @@ class Writer(object):
                         self._boundary(name, "Potential Constant", True)
 
                 self._handled(obj)
-
-    def _handleStatcurrent(self):
-        activeIn = []
-        for equation in self.solver.Group:
-            if femutils.is_of_type(equation, "Fem::EquationElmerStatcurrent"):
-                if equation.References:
-                    activeIn = equation.References[0][1]
-                else:
-                    activeIn = self._getAllBodies()
-                solverSection = self._getStatcurrentSolver(equation)
-                for body in activeIn:
-                    self._addSolver(body, solverSection)
-        if activeIn:
-            self._handleStatcurrentConstants()
-            self._handleStatcurrentBndConditions()
-            # self._handleElectrostaticInitial(activeIn)
-            # self._handleElectrostaticBodyForces(activeIn)
-            self._handleStatcurrentMaterial(activeIn)
 
     def _handleFlux(self):
         activeIn = []

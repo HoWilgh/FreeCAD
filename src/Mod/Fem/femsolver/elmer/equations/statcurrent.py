@@ -55,7 +55,8 @@ class Proxy(nonlinear.Proxy, equationbase.StatcurrentProxy):
             "Statcurrent",
             ""
         )
-
+        #Calculate Electric Conductivity
+        
         obj.Priority = 20
 
 
